@@ -26,7 +26,7 @@ app = FastAPI(
 @app.post("/api/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED,
           tags=["Authentication"])
 async def register(user_data: UserCreate):
-    """Создание нового пользователя"""
+
     existing_user = db.get_user_by_login(user_data.login)
     if existing_user:
         raise HTTPException(
@@ -45,7 +45,6 @@ async def register(user_data: UserCreate):
 
 @app.post("/api/auth/login", response_model=Token, tags=["Authentication"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    """Получение JWT токена"""
     user = db.get_user_by_login(form_data.username)
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(
@@ -64,7 +63,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 # === User Endpoints ===
 @app.get("/api/users/search", response_model=UserResponse, tags=["Users"])
 async def search_user_by_login(login: str):
-    """Поиск пользователя по логину"""
     user = db.get_user_by_login(login)
     if not user:
         raise HTTPException(
@@ -76,7 +74,6 @@ async def search_user_by_login(login: str):
 
 @app.get("/api/users/searchByName", response_model=List[UserResponse], tags=["Users"])
 async def search_user_by_name(pattern: str):
-    """Поиск пользователя по маске имя и фамилия"""
     users = db.search_users_by_name(pattern)
     return users
 
@@ -84,7 +81,6 @@ async def search_user_by_name(pattern: str):
 # === Project Endpoints ===
 @app.post("/api/projects", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, tags=["Projects"])
 async def create_project(project_data: ProjectCreate, current_user: TokenData = Depends(get_current_user)):
-    """Создание проекта (требуется авторизация)"""
     creator = db.get_user_by_login(current_user.login)
     project = db.create_project(
         name=project_data.name,
@@ -96,14 +92,12 @@ async def create_project(project_data: ProjectCreate, current_user: TokenData = 
 
 @app.get("/api/projects/search", response_model=List[ProjectResponse], tags=["Projects"])
 async def search_project_by_name(name: str):
-    """Поиск проекта по имени"""
     projects = db.search_projects_by_name(name)
     return projects
 
 
 @app.get("/api/projects", response_model=List[ProjectResponse], tags=["Projects"])
 async def get_all_projects():
-    """Получение всех проектов"""
     return db.get_all_projects()
 
 
@@ -111,7 +105,7 @@ async def get_all_projects():
 @app.post("/api/projects/{project_id}/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED,
           tags=["Tasks"])
 async def create_task(project_id: int, task_data: TaskCreate, current_user: TokenData = Depends(get_current_user)):
-    """Создание задачи в проекте (требуется авторизация)"""
+
     project = db.get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -130,7 +124,6 @@ async def create_task(project_id: int, task_data: TaskCreate, current_user: Toke
 
 @app.get("/api/projects/{project_id}/tasks", response_model=List[TaskResponse], tags=["Tasks"])
 async def get_project_tasks(project_id: int):
-    """Получение всех задач в проекте"""
     project = db.get_project_by_id(project_id)
     if not project:
         raise HTTPException(
@@ -142,7 +135,6 @@ async def get_project_tasks(project_id: int):
 
 @app.get("/api/tasks/{task_code}", response_model=TaskResponse, tags=["Tasks"])
 async def get_task_by_code(task_code: str):
-    """Получение задачи по коду"""
     task = db.get_task_by_code(task_code)
     if not task:
         raise HTTPException(
@@ -155,5 +147,4 @@ async def get_task_by_code(task_code: str):
 # === Health Check ===
 @app.get("/health", tags=["System"])
 async def health_check():
-    """Проверка работоспособности API"""
     return {"status": "ok"}
