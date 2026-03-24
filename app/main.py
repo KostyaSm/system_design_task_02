@@ -22,8 +22,6 @@ app = FastAPI(
 )
 
 
-
-
 @app.post("/api/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED,
           tags=["Authentication"])
 async def register(user_data: UserCreate):
@@ -79,11 +77,6 @@ async def search_user_by_name(pattern: str):
     return users
 
 
-
-
-
-
-
 # Project
 @app.post("/api/projects", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, tags=["Projects"])
 async def create_project(project_data: ProjectCreate, current_user: TokenData = Depends(get_current_user)):
@@ -107,11 +100,6 @@ async def get_all_projects():
     return db.get_all_projects()
 
 
-
-
-
-
-
 # task
 @app.post("/api/projects/{project_id}/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED,
           tags=["Tasks"])
@@ -131,8 +119,6 @@ async def create_task(project_id: int, task_data: TaskCreate, current_user: Toke
         assignee_id=task_data.assignee_id
     )
     return task
-
-
 
 
 @app.get("/api/projects/{project_id}/tasks", response_model=List[TaskResponse], tags=["Tasks"])
@@ -155,8 +141,6 @@ async def get_task_by_code(task_code: str):
             detail="Task not found"
         )
     return task
-
-
 
 
 #Health chek
