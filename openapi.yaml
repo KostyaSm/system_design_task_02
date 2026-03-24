@@ -1,0 +1,208 @@
+openapi: 3.1.0
+info:
+  title: Project Management API
+  description: REST API для управления проектами, задачами и исполнителями
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Создание нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+      responses:
+        '201':
+          description: Пользователь создан
+        '400':
+          description: Пользователь уже существует
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Получение JWT токена
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Токен получен
+        '401':
+          description: Неверные учётные данные
+
+  /api/users/search:
+    get:
+      tags:
+        - Users
+      summary: Поиск пользователя по логину
+      parameters:
+        - name: login
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Пользователь найден
+        '404':
+          description: Пользователь не найден
+
+  /api/users/searchByName:
+    get:
+      tags:
+        - Users
+      summary: Поиск пользователя по маске имя и фамилия
+      parameters:
+        - name: pattern
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список пользователей
+
+  /api/projects:
+    get:
+      tags:
+        - Projects
+      summary: Получение всех проектов
+      responses:
+        '200':
+          description: Список проектов
+    post:
+      tags:
+        - Projects
+      summary: Создание проекта
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Проект создан
+        '401':
+          description: Требуется авторизация
+
+  /api/projects/search:
+    get:
+      tags:
+        - Projects
+      summary: Поиск проекта по имени
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список проектов
+
+  /api/projects/{project_id}/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: Получение всех задач в проекте
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список задач
+        '404':
+          description: Проект не найден
+    post:
+      tags:
+        - Tasks
+      summary: Создание задачи в проекте
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                assignee_id:
+                  type: integer
+      responses:
+        '201':
+          description: Задача создана
+        '401':
+          description: Требуется авторизация
+        '404':
+          description: Проект не найден
+
+  /api/tasks/{task_code}:
+    get:
+      tags:
+        - Tasks
+      summary: Получение задачи по коду
+      parameters:
+        - name: task_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Задача найдена
+        '404':
+          description: Задача не найдена
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
