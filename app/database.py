@@ -12,7 +12,6 @@ class InMemoryDB:
         self.task_id_counter = 1
         self.task_code_counter = 1
 
-    # === User operations ===
     def create_user(self, login: str, password_hash: str, first_name: str, last_name: str) -> User:
         user = User(
             id=self.user_id_counter,
@@ -43,7 +42,7 @@ class InMemoryDB:
                 result.append(user)
         return result
 
-    # === Project operations ===
+    # Project operattions
     def create_project(self, name: str, description: Optional[str], created_by: int) -> Project:
         project = Project(
             id=self.project_id_counter,
@@ -69,7 +68,7 @@ class InMemoryDB:
     def get_all_projects(self) -> List[Project]:
         return list(self.projects.values())
 
-    # === Task operations ===
+    # Task
     def create_task(self, title: str, project_id: int, description: Optional[str] = None, assignee_id: Optional[int] = None) -> Task:
         task_code = f"TASK-{self.task_code_counter}"
         task = Task(
@@ -95,5 +94,5 @@ class InMemoryDB:
         return [task for task in self.tasks.values() if task.project_id == project_id]
 
 
-# Глобальный экземпляр БД
+# Глобальный БД
 db = InMemoryDB()

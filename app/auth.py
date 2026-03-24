@@ -6,12 +6,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 
-# === Конфигурация ===
+
 SECRET_KEY = "your-secret-key-change-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-# === Хэширование паролей ===
+# Хэширование
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
@@ -24,7 +24,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-# === JWT токены ===
+#  JWT
 class TokenData(BaseModel):
     login: Optional[str] = None
 

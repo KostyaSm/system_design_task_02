@@ -3,7 +3,6 @@ from typing import Optional
 from datetime import datetime
 
 
-# === User Schemas ===
 class UserCreate(BaseModel):
     login: str
     password: str
@@ -32,7 +31,6 @@ class Token(BaseModel):
     token_type: str = "bearer"
 
 
-# === Project Schemas ===
 class ProjectCreate(BaseModel):
     name: str
     description: Optional[str] = None
@@ -48,8 +46,7 @@ class ProjectResponse(BaseModel):
     class Config:
         from_attributes = True
 
-
-# === Task Schemas ===
+#                                                                      Таски
 class TaskCreate(BaseModel):
     title: str
     description: Optional[str] = None

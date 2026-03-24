@@ -22,7 +22,6 @@ app = FastAPI(
 )
 
 
-# === Auth Endpoints ===
 @app.post("/api/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED,
           tags=["Authentication"])
 async def register(user_data: UserCreate):
@@ -60,7 +59,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-# === User Endpoints ===
+# User
 @app.get("/api/users/search", response_model=UserResponse, tags=["Users"])
 async def search_user_by_login(login: str):
     user = db.get_user_by_login(login)
@@ -78,7 +77,7 @@ async def search_user_by_name(pattern: str):
     return users
 
 
-# === Project Endpoints ===
+# Project
 @app.post("/api/projects", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED, tags=["Projects"])
 async def create_project(project_data: ProjectCreate, current_user: TokenData = Depends(get_current_user)):
     creator = db.get_user_by_login(current_user.login)
@@ -101,7 +100,7 @@ async def get_all_projects():
     return db.get_all_projects()
 
 
-# === Task Endpoints ===
+# task
 @app.post("/api/projects/{project_id}/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED,
           tags=["Tasks"])
 async def create_task(project_id: int, task_data: TaskCreate, current_user: TokenData = Depends(get_current_user)):
@@ -144,7 +143,7 @@ async def get_task_by_code(task_code: str):
     return task
 
 
-# === Health Check ===
+#Health chek
 @app.get("/health", tags=["System"])
 async def health_check():
     return {"status": "ok"}
